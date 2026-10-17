@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="color-scheme" content="only light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --ink:#1c2733; --muted:#5d6b7a; --line:#d6dde4; --paper:#ffffff; --bg:#eef1f4;
+  --brand:#0e5f5a; --brand-ink:#ffffff; --brand-soft:#dcefed;
+  --ok:#1b6e45; --ok-bg:#dff1e6; --warn:#8a5a00; --warn-bg:#fbeccb; --bad:#a3271c; --bad-bg:#f8dcd8;
+  --radius:6px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.5}
+h1,h2,h3{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hidden{display:none!important}
+
+/* Login */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:32px;width:100%;max-width:400px}
+.login-card h1{font-size:24px;margin-bottom:4px}
+.login-card p{color:var(--muted);margin:0 0 24px}
+
+/* Form controls */
+label{display:block;font-size:13px;font-weight:500;margin-bottom:4px;color:var(--muted)}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+textarea{min-height:80px;resize:vertical}
+.field{margin-bottom:14px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:var(--radius);cursor:pointer;font-weight:500}
+.btn:hover{background:#f4f6f8}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn.primary:hover{background:#0b4e4a}
+.btn.danger{color:var(--bad);border-color:#e3b5b0}
+.btn.danger:hover{background:var(--bad-bg)}
+.btn.small{padding:4px 10px;font-size:13px}
+.btn[disabled]{opacity:.6;cursor:wait}
+.error{color:var(--bad);font-size:13px;min-height:18px;margin:8px 0}
+
+/* App shell */
+header.top{background:var(--ink);color:#fff;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header.top h1{font-size:18px;flex:1;min-width:200px}
+header.top .who{font-size:13px;opacity:.85}
+header.top .btn{background:transparent;color:#fff;border-color:#ffffff55}
+header.top .btn:hover{background:#ffffff1a}
+main{max-width:1180px;margin:0 auto;padding:24px}
+.summary{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:20px}
+.summary div{min-width:110px}
+.summary b{display:block;font-family:'IBM Plex Serif',serif;font-size:26px;line-height:1.1}
+.summary span{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.toolbar input{max-width:320px}
+.toolbar select{width:auto}
+.toolbar .spacer{flex:1}
+
+/* Table */
+.table-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:500;background:#f7f9fa;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#f7fafa}
+tr:last-child td{border-bottom:0}
+td .sub{color:var(--muted);font-size:13px}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:500;white-space:nowrap}
+.badge.aktif{background:var(--ok-bg);color:var(--ok)}
+.badge.segera{background:var(--warn-bg);color:var(--warn)}
+.badge.berakhir{background:var(--bad-bg);color:var(--bad)}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+
+/* Dialogs */
+dialog{background:#ffffff!important;color:#1c2733!important;border:0;border-radius:8px;padding:0;width:min(640px,94vw);max-height:92vh;box-shadow:0 20px 60px #0004}
+dialog a{color:#0e5f5a}
+dialog .btn{background:#ffffff;color:#1c2733}
+dialog .btn:hover{background:#f4f6f8}
+dialog .btn.primary{background:#0e5f5a;color:#ffffff;border-color:#0e5f5a}
+dialog .btn.primary:hover{background:#0b4e4a}
+dialog .btn.danger{color:#a3271c;border-color:#e3b5b0}
+dialog input,dialog select,dialog textarea{background:#ffffff;color:#1c2733}
+dialog::backdrop{background:#1c273388}
+.dlg-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:start;gap:12px}
+.dlg-head h2{font-size:19px}
+.dlg-body{padding:20px 22px;overflow-y:auto;max-height:calc(92vh - 150px)}
+.dlg-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}main{padding:16px}}
+dl.detail{display:grid;grid-template-columns:150px 1fr;gap:10px 14px;margin:0}
+dl.detail dt{color:var(--muted);font-size:13px}
+dl.detail dd{margin:0;word-break:break-word}
+@media(max-width:560px){dl.detail{grid-template-columns:1fr;gap:2px}dl.detail dd{margin-bottom:10px}}
+fieldset{border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px 2px;margin:0 0 14px}
+legend{font-size:13px;font-weight:600;padding:0 6px}
+.note{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:var(--radius);z-index:99;font-size:14px}
+.toast.err{background:var(--bad)}
+@media (prefers-reduced-motion:no-preference){.toast{animation:in .2s ease-out}@keyframes in{from{opacity:0;transform:translate(-50%,8px)}}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="login">
+  <div class="login-card">
+    <h1>Perjanjian Kerja Sama & MoU</h1>
+    <p>Masuk untuk melihat dokumen kerja sama Anda.</p>
+    <div class="field"><label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="username"></div>
+    <div class="field"><label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password"></div>
+    <div class="error" id="lErr" role="alert"></div>
+    <button class="btn primary" id="lBtn" style="width:100%">Masuk</button>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<section id="app" class="hidden">
+  <header class="top">
+    <h1>Perjanjian Kerja Sama & MoU</h1>
+    <span class="who" id="who"></span>
+    <button class="btn small" id="btnPass">Ganti password</button>
+    <button class="btn small" id="btnLogout">Keluar</button>
+  </header>
+  <main>
+    <div class="summary" id="summary"></div>
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Cari nomor, judul, atau nama pihak" aria-label="Cari dokumen">
+      <select id="fStatus" aria-label="Filter status">
+        <option value="">Semua status</option>
+        <option>Aktif</option><option>Segera berakhir</option><option>Berakhir</option>
+      </select>
+      <select id="fJenis" aria-label="Filter jenis">
+        <option value="">Semua jenis</option>
+        <option>MoU</option><option>Perjanjian Kerja Sama</option>
+      </select>
+      <span class="spacer"></span>
+      <span class="admin-only hidden" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="btnUsers">Kelola akun</button>
+        <button class="btn" id="btnLogs">Riwayat notifikasi</button>
+        <button class="btn" id="btnRun">Kirim pengingat sekarang</button>
+        <button class="btn primary" id="btnAdd">Tambah dokumen</button>
+      </span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dokumen</th><th>Pihak</th><th>Periode</th><th>Status</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty hidden" id="empty">Belum ada dokumen yang cocok.</div>
+    </div>
+  </main>
+</section>
+
+<!-- ============ DETAIL ============ -->
+<dialog id="dDetail">
+  <div class="dlg-head"><h2 id="dtTitle"></h2><button class="btn small" data-close>Tutup</button></div>
+  <div class="dlg-body"><dl class="detail" id="dtBody"></dl></div>
+  <div class="dlg-foot admin-only hidden">
+    <button class="btn danger" id="dtDelete">Hapus</button>
+    <button class="btn primary" id="dtEdit">Ubah</button>
+  </div>
+</dialog>
+
+<!-- ============ FORM MoU ============ -->
+<dialog id="dForm">
+  <div class="dlg-head"><h2 id="fmTitle">Tambah dokumen</h2><button class="btn small" data-close>Batal</button></div>
+  <div class="dlg-body">
+    <input type="hidden" id="f_ID">
+    <div class="grid2">
+      <div class="field"><label for="f_NomorDokumen">Nomor dokumen *</label><input id="f_NomorDokumen"></div>
+      <div class="field"><label for="f_Jenis">Jenis *</label>
+        <select id="f_Jenis"><option>MoU</option><option>Perjanjian Kerja Sama</option></select></div>
+    </div>
+    <div class="field"><label for="f_Judul">Judul *</label><input id="f_Judul"></div>
+    <div class="grid2">
+      <div class="field"><label for="f_PihakPertama">Pihak pertama *</label><input id="f_PihakPertama"></div>
+      <div class="field"><label for="f_PihakKedua">Pihak kedua (mitra) *</label><input id="f_PihakKedua">
+        <div class="note">Harus sama persis dengan Nama mitra di akun mitra.</div></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label for="f_TanggalMulai">Tanggal mulai *</label><input type="date" id="f_TanggalMulai"></div>
+      <div class="field"><label for="f_TanggalBerakhir">Tanggal berakhir *</label><input type="date" id="f_TanggalBerakhir"></div>
+    </div>
+    <fieldset><legend>Kontak pengingat pihak pertama</legend>
+      <div class="grid2">
+        <div class="field"><label for="f_EmailPihakPertama">Email</label><input type="email" id="f_EmailPihakPertama"></div>
+        <div class="field"><label for="f_WAPihakPertama">WhatsApp</label><input id="f_WAPihakPertama" placeholder="08123456789"></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Kontak pengingat pihak kedua</legend>
+      <div class="grid2">
+        <div class="field"><label for="f_EmailPihakKedua">Email</label><input type="email" id="f_EmailPihakKedua"></div>
+        <div class="field"><label for="f_WAPihakKedua">WhatsApp</label><input id="f_WAPihakKedua" placeholder="08123456789"></div>
+      </div>
+    </fieldset>
+    <div class="field"><label for="f_Deskripsi">Ringkasan isi perjanjian</label><textarea id="f_Deskripsi"></textarea></div>
+    <div class="field"><label for="f_LinkDokumen">Link dokumen (Google Drive)</label><input id="f_LinkDokumen" placeholder="https://drive.google.com/..."></div>
+    <div class="field"><label for="f_CatatanInternal">Catatan internal (tidak terlihat oleh mitra)</label><textarea id="f_CatatanInternal"></textarea></div>
+    <div class="error" id="fmErr" role="alert"></div>
+  </div>
+  <div class="dlg-foot"><button class="btn primary" id="fmSave">Simpan</button></div>
+</dialog>
+
+<!-- ============ AKUN ============ -->
+<dialog id="dUsers">
+  <div class="dlg-head"><h2>Kelola akun</h2><button class="btn small" data-close>Tutup</button></div>
+  <div class="dlg-body">
+    <div class="table-wrap" style="margin-bottom:18px"><table style="min-width:0"><thead><tr><th>Akun</th><th>Peran</th><th></th></tr></thead><tbody id="uRows"></tbody></table></div>
+    <h3 style="font-size:16px;margin-bottom:10px" id="uFormTitle">Tambah akun</h3>
+    <div class="grid2">
+      <div class="field"><label for="u_Email">Email</label><input id="u_Email" type="email"></div>
+      <div class="field"><label for="u_Nama">Nama</label><input id="u_Nama"></div>
+      <div class="field"><label for="u_Role">Peran</label><select id="u_Role"><option value="mitra">Mitra (hanya lihat)</option><option value="admin">Admin</option></select></div>
+      <div class="field"><label for="u_NamaMitra">Nama mitra</label><input id="u_NamaMitra" placeholder="Sama dengan Pihak kedua"></div>
+      <div class="field"><label for="u_Password">Password</label><input id="u_Password" type="password" autocomplete="new-password"><div class="note">Kosongkan saat mengubah jika tidak ingin mengganti.</div></div>
+      <div class="field"><label for="u_Aktif">Status</label><select id="u_Aktif"><option value="TRUE">Aktif</option><option value="FALSE">Nonaktif</option></select></div>
+    </div>
+    <div class="error" id="uErr" role="alert"></div>
+  </div>
+  <div class="dlg-foot"><button class="btn" id="uReset">Kosongkan form</button><button class="btn primary" id="uSave">Simpan akun</button></div>
+</dialog>
+
+<!-- ============ LOG ============ -->
+<dialog id="dLogs" style="width:min(860px,96vw)">
+  <div class="dlg-head"><h2>Riwayat notifikasi</h2><button class="btn small" data-close>Tutup</button></div>
+  <div class="dlg-body" style="padding:0"><div class="table-wrap" style="border:0"><table><thead><tr><th>Waktu</th><th>Nomor</th><th>Kanal</th><th>Tujuan</th><th>Status</th><th>Keterangan</th></tr></thead><tbody id="lRows"></tbody></table></div></div>
+</dialog>
+
+<!-- ============ GANTI PASSWORD ============ -->
+<dialog id="dPass">
+  <div class="dlg-head"><h2>Ganti password</h2><button class="btn small" data-close>Batal</button></div>
+  <div class="dlg-body">
+    <div class="field"><label for="p_old">Password lama</label><input id="p_old" type="password" autocomplete="current-password"></div>
+    <div class="field"><label for="p_new">Password baru (min. 8 karakter)</label><input id="p_new" type="password" autocomplete="new-password"></div>
+    <div class="error" id="pErr" role="alert"></div>
+  </div>
+  <div class="dlg-foot"><button class="btn primary" id="pSave">Simpan password</button></div>
+</dialog>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var state = { token: null, user: null, mous: [], current: null };
+  var FIELDS = ['ID','NomorDokumen','Judul','Jenis','PihakPertama','PihakKedua','TanggalMulai','TanggalBerakhir',
+    'EmailPihakPertama','WAPihakPertama','EmailPihakKedua','WAPihakKedua','Deskripsi','LinkDokumen','CatatanInternal'];
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function safeUrl(u){ return /^https?:\/\//i.test(u) ? u : ''; }
+  var BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  function tgl(s){ var p = String(s||'').split('-'); return p.length===3 ? Number(p[2])+' '+BULAN[Number(p[1])-1]+' '+p[0] : '-'; }
+  function badge(m){
+    var cls = m.Status==='Aktif' ? 'aktif' : m.Status==='Segera berakhir' ? 'segera' : 'berakhir';
+    return '<span class="badge '+cls+'">'+esc(m.Status)+'</span>';
+  }
+  function sisa(m){
+    if (m.SisaHari == null) return '';
+    if (m.SisaHari < 0) return 'Lewat '+Math.abs(m.SisaHari)+' hari';
+    if (m.SisaHari === 0) return 'Berakhir hari ini';
+    return m.SisaHari+' hari lagi';
+  }
+
+  // ---- komunikasi dengan server ----
+  function call(fn){
+    var args = Array.prototype.slice.call(arguments,1);
+    return new Promise(function(resolve,reject){
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(function(e){
+          var msg = String(e && e.message || e).replace(/^Error:\s*/,'');
+          if (msg.indexOf('SESI_HABIS') !== -1){ doLogout(true); reject(new Error('Sesi berakhir. Silakan masuk lagi.')); }
+          else reject(new Error(msg));
+        })[fn].apply(null,args);
+    });
+  }
+  function toast(msg, isErr){
+    var t = document.createElement('div'); t.className = 'toast'+(isErr?' err':''); t.textContent = msg;
+    document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3500);
+  }
+  function busy(btn, on){ btn.disabled = on; }
+
+  // ---- login ----
+  function showApp(){
+    $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+    $('who').textContent = state.user.nama + (state.user.role==='mitra' ? ' · '+state.user.mitra : ' · Admin');
+    var isAdmin = state.user.role === 'admin';
+    document.querySelectorAll('.admin-only').forEach(function(el){
+      el.classList.toggle('hidden', !isAdmin);
+    });
+    document.querySelectorAll('span.admin-only').forEach(function(el){ if (isAdmin) el.style.display='flex'; });
+    load();
+  }
+  function doLogout(silent){
+    if (state.token && !silent) call('logout', state.token).catch(function(){});
+    sessionStorage.removeItem('mou_token');
+    state.token = null; state.user = null;
+    $('app').classList.add('hidden'); $('login').classList.remove('hidden');
+    $('lPass').value = '';
+    if (silent) $('lErr').textContent = 'Sesi berakhir. Silakan masuk lagi.';
+    document.querySelectorAll('dialog[open]').forEach(function(d){ d.close(); });
+  }
+  $('lBtn').onclick = function(){
+    $('lErr').textContent = ''; busy($('lBtn'), true);
+    call('login', $('lEmail').value, $('lPass').value).then(function(r){
+      busy($('lBtn'), false);
+      if (!r.ok){ $('lErr').textContent = r.error; return; }
+      state.token = r.token; state.user = r.user; sessionStorage.setItem('mou_token', r.token); showApp();
+    }).catch(function(e){ busy($('lBtn'), false); $('lErr').textContent = e.message; });
+  };
+  [$('lEmail'),$('lPass')].forEach(function(el){ el.addEventListener('keydown', function(e){ if (e.key==='Enter') $('lBtn').click(); }); });
+  $('btnLogout').onclick = function(){ doLogout(false); };
+
+  // pulihkan sesi
+  var saved = sessionStorage.getItem('mou_token');
+  if (saved){
+    call('checkSession', saved).then(function(r){
+      if (r.ok){ state.token = saved; state.user = r.user; showApp(); }
+    }).catch(function(){});
+  }
+
+  // ---- daftar ----
+  function load(){
+    call('getMous', state.token).then(function(list){ state.mous = list; render(); })
+      .catch(function(e){ toast(e.message, true); });
+  }
+  function render(){
+    var q = $('q').value.trim().toLowerCase(), fs = $('fStatus').value, fj = $('fJenis').value;
+    var list = state.mous.filter(function(m){
+      var hay = (m.NomorDokumen+' '+m.Judul+' '+m.PihakPertama+' '+m.PihakKedua).toLowerCase();
+      return (!q || hay.indexOf(q)!==-1) && (!fs || m.Status===fs) && (!fj || m.Jenis===fj);
+    }).sort(function(a,b){ return a.TanggalBerakhir < b.TanggalBerakhir ? -1 : 1; });
+
+    var c = { total: state.mous.length, aktif:0, segera:0, berakhir:0 };
+    state.mous.forEach(function(m){ if (m.Status==='Aktif') c.aktif++; else if (m.Status==='Segera berakhir') c.segera++; else c.berakhir++; });
+    $('summary').innerHTML = '<div><b>'+c.total+'</b><span>Total dokumen</span></div>'+
+      '<div><b>'+c.aktif+'</b><span>Aktif</span></div>'+
+      '<div><b>'+c.segera+'</b><span>Segera berakhir (90 hari)</span></div>'+
+      '<div><b>'+c.berakhir+'</b><span>Sudah berakhir</span></div>';
+
+    $('rows').innerHTML = list.map(function(m){
+      return '<tr data-id="'+esc(m.ID)+'">'+
+        '<td><strong>'+esc(m.Judul)+'</strong><div class="sub">'+esc(m.Jenis)+' · '+esc(m.NomorDokumen)+'</div></td>'+
+        '<td>'+esc(m.PihakPertama)+'<div class="sub">dengan '+esc(m.PihakKedua)+'</div></td>'+
+        '<td>'+tgl(m.TanggalMulai)+'<div class="sub">s.d. '+tgl(m.TanggalBerakhir)+'</div></td>'+
+        '<td>'+badge(m)+'<div class="sub">'+esc(sisa(m))+'</div></td></tr>';
+    }).join('');
+    $('empty').classList.toggle('hidden', list.length>0);
+  }
+  ['q','fStatus','fJenis'].forEach(function(id){ $(id).addEventListener('input', render); });
+  $('rows').addEventListener('click', function(e){
+    var tr = e.target.closest('tr'); if (!tr) return;
+    openDetail(tr.getAttribute('data-id'));
+  });
+
+  // ---- detail ----
+  function row(k,v){ return '<dt>'+k+'</dt><dd>'+v+'</dd>'; }
+  function openDetail(id){
+    var m = state.mous.filter(function(x){ return x.ID===id; })[0]; if (!m) return;
+    state.current = m;
+    $('dtTitle').textContent = m.Judul;
+    var h = row('Nomor dokumen', esc(m.NomorDokumen)) + row('Jenis', esc(m.Jenis)) +
+      row('Pihak pertama', esc(m.PihakPertama)) + row('Pihak kedua', esc(m.PihakKedua)) +
+      row('Periode', tgl(m.TanggalMulai)+' s.d. '+tgl(m.TanggalBerakhir)) +
+      row('Status', badge(m)+' '+esc(sisa(m))) +
+      row('Isi perjanjian', esc(m.Deskripsi||'-').replace(/\n/g,'<br>'));
+    var url = safeUrl(m.LinkDokumen);
+    h += row('Dokumen', url ? '<a href="'+esc(url)+'" target="_blank" rel="noopener">Buka dokumen</a>' : '-');
+    if (state.user.role==='admin'){
+      h += row('Kontak pihak pertama', esc((m.EmailPihakPertama||'-')+' / '+(m.WAPihakPertama||'-'))) +
+        row('Kontak pihak kedua', esc((m.EmailPihakKedua||'-')+' / '+(m.WAPihakKedua||'-'))) +
+        row('Pengingat terkirim', esc(m.ReminderTerkirim ? 'H-'+m.ReminderTerkirim.split(',').join(', H-') : 'Belum ada')) +
+        row('Catatan internal', esc(m.CatatanInternal||'-').replace(/\n/g,'<br>'));
+    }
+    $('dtBody').innerHTML = h;
+    $('dDetail').showModal();
+  }
+  document.querySelectorAll('[data-close]').forEach(function(b){
+    b.onclick = function(){ b.closest('dialog').close(); };
+  });
+
+  // ---- form MoU (admin) ----
+  function openForm(m){
+    $('fmTitle').textContent = m ? 'Ubah dokumen' : 'Tambah dokumen';
+    FIELDS.forEach(function(f){ $('f_'+f).value = m ? (m[f]||'') : ''; });
+    if (!m) $('f_Jenis').value = 'MoU';
+    $('fmErr').textContent = '';
+    $('dForm').showModal();
+  }
+  $('btnAdd').onclick = function(){ openForm(null); };
+  $('dtEdit').onclick = function(){ $('dDetail').close(); openForm(state.current); };
+  $('fmSave').onclick = function(){
+    var data = {}; FIELDS.forEach(function(f){ data[f] = $('f_'+f).value; });
+    $('fmErr').textContent = ''; busy($('fmSave'), true);
+    call('saveMou', state.token, data).then(function(){
+      busy($('fmSave'), false); $('dForm').close(); toast('Dokumen disimpan'); load();
+    }).catch(function(e){ busy($('fmSave'), false); $('fmErr').textContent = e.message; });
+  };
+  $('dtDelete').onclick = function(){
+    if (!confirm('Hapus dokumen "'+state.current.Judul+'"? Tindakan ini tidak bisa dibatalkan.')) return;
+    call('deleteMou', state.token, state.current.ID).then(function(){
+      $('dDetail').close(); toast('Dokumen dihapus'); load();
+    }).catch(function(e){ toast(e.message, true); });
+  };
+  $('btnRun').onclick = function(){
+    if (!confirm('Periksa semua dokumen dan kirim pengingat yang jatuh tempo sekarang?')) return;
+    busy($('btnRun'), true);
+    call('runReminderNow', state.token).then(function(n){
+      busy($('btnRun'), false); toast(n+' dokumen diproses'); load();
+    }).catch(function(e){ busy($('btnRun'), false); toast(e.message, true); });
+  };
+
+  // ---- akun (admin) ----
+  var users = [];
+  function loadUsers(){
+    call('listUsers', state.token).then(function(list){
+      users = list;
+      $('uRows').innerHTML = list.map(function(u){
+        return '<tr><td><strong>'+esc(u.Nama||u.Email)+'</strong><div class="sub">'+esc(u.Email)+(u.Aktif==='FALSE'?' · nonaktif':'')+'</div></td>'+
+          '<td>'+(u.Role==='admin'?'Admin':'Mitra<div class="sub">'+esc(u.NamaMitra)+'</div>')+'</td>'+
+          '<td style="white-space:nowrap"><button class="btn small" data-edit="'+esc(u.Email)+'">Ubah</button> '+
+          '<button class="btn small danger" data-del="'+esc(u.Email)+'">Hapus</button></td></tr>';
+      }).join('');
+    }).catch(function(e){ toast(e.message, true); });
+  }
+  function resetUserForm(){
+    ['Email','Nama','NamaMitra','Password'].forEach(function(f){ $('u_'+f).value=''; });
+    $('u_Role').value='mitra'; $('u_Aktif').value='TRUE'; $('u_Email').readOnly=false;
+    $('uFormTitle').textContent='Tambah akun'; $('uErr').textContent='';
+  }
+  $('btnUsers').onclick = function(){ resetUserForm(); loadUsers(); $('dUsers').showModal(); };
+  $('uReset').onclick = resetUserForm;
+  $('uRows').addEventListener('click', function(e){
+    var ed = e.target.getAttribute('data-edit'), dl = e.target.getAttribute('data-del');
+    if (ed){
+      var u = users.filter(function(x){ return x.Email===ed; })[0];
+      $('u_Email').value=u.Email; $('u_Email').readOnly=true; $('u_Nama').value=u.Nama; $('u_Role').value=u.Role;
+      $('u_NamaMitra').value=u.NamaMitra; $('u_Aktif').value=u.Aktif; $('u_Password').value='';
+      $('uFormTitle').textContent='Ubah akun'; $('uErr').textContent='';
+    }
+    if (dl && confirm('Hapus akun '+dl+'?')){
+      call('deleteUser', state.token, dl).then(function(){ toast('Akun dihapus'); loadUsers(); })
+        .catch(function(err){ $('uErr').textContent = err.message; });
+    }
+  });
+  $('uSave').onclick = function(){
+    $('uErr').textContent=''; busy($('uSave'), true);
+    call('saveUser', state.token, {
+      Email:$('u_Email').value, Nama:$('u_Nama').value, Role:$('u_Role').value,
+      NamaMitra:$('u_NamaMitra').value, Password:$('u_Password').value, Aktif:$('u_Aktif').value
+    }).then(function(){ busy($('uSave'), false); toast('Akun disimpan'); resetUserForm(); loadUsers(); })
+      .catch(function(e){ busy($('uSave'), false); $('uErr').textContent = e.message; });
+  };
+
+  // ---- log ----
+  $('btnLogs').onclick = function(){
+    call('getLogs', state.token).then(function(rows){
+      $('lRows').innerHTML = rows.length ? rows.map(function(r){
+        return '<tr style="cursor:default">'+r.slice(0,7).filter(function(_,i){return i!==1;}).map(function(c){ return '<td>'+esc(c)+'</td>'; }).join('')+'</tr>';
+      }).join('') : '<tr style="cursor:default"><td colspan="6" class="empty">Belum ada notifikasi terkirim.</td></tr>';
+      $('dLogs').showModal();
+    }).catch(function(e){ toast(e.message, true); });
+  };
+
+  // ---- ganti password ----
+  $('btnPass').onclick = function(){ $('p_old').value=''; $('p_new').value=''; $('pErr').textContent=''; $('dPass').showModal(); };
+  $('pSave').onclick = function(){
+    busy($('pSave'), true);
+    call('changePassword', state.token, $('p_old').value, $('p_new').value).then(function(){
+      busy($('pSave'), false); $('dPass').close(); toast('Password diperbarui');
+    }).catch(function(e){ busy($('pSave'), false); $('pErr').textContent = e.message; });
+  };
+})();
+</script>
+</body>
+</html>
